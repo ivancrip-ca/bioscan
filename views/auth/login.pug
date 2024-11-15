@@ -1,0 +1,30 @@
+extends ../layout/index
+
+block contenido
+    .py-10
+        h1.text-6xl.my-10.font-extrabold.text-center Bio
+            span.font-normal Scan
+                
+        //Condicional donde evalua y muestra los errores hechos
+        if errores
+            div(class="fixed top-4 right-4 max-w-xs z-50")
+                each error in errores
+                    p.bg-red-600.text-white.text-sm.text-center.py-2.mt-2.font-bold.rounded-md.shadow-lg.animate-slideInOutRight.px-6= error.msg
+
+        //Diseno del formulario prinicipal de login
+        .mt-8.mx-auto.max-w-md
+            .bg-white.py-8.px-4.shadow
+                h2.text-center.text-2xl.font-extrabold=pagina
+                form.space-y-5(method="POST" action="/auth/login" noValidate)
+                    //Input donde sustrae el token para hacer valido el formulario
+                    input(type="hidden" name="_csrf" value=csrfToken)
+                    div
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="email") Usuario
+                        input#email.w-full.px-3.py-4.border.border-gray-300.rounded-md.placeholer-gray-400(placeholder="Usuario" type="text" name="Usu_Usuario")                
+                    div
+                        label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="password") Contraseña
+                        input#password.w-full.px-3.py-4.border.border-gray-300.rounded-md.placeholer-gray-400(placeholder="Contraseña" type="password" name="Usu_Password")
+
+                    div.flex.items-center.justify-between
+                    
+                    input(class="w-full bg-blue-700     text-center hover:bg-blue-900 text-white font-bold py-3 cursor-pointer rounded-xl" type="submit" value="Iniciar sesion")    

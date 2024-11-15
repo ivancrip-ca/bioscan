@@ -1,0 +1,120 @@
+extends ../layout/sucursalesindex
+
+block contenido
+    if errores
+        div(class="fixed top-4 right-4 max-w-xs z-50")
+            each error in errores
+                p.bg-red-600.text-white.text-sm.text-center.py-2.mt-2.font-bold.rounded-md.shadow-lg.animate-slideInOutRight.px-6= error.msg
+
+    div(class="flex justify-between items-center mb-5")
+        h1.text-3xl.font-bold Lista de Empleados
+
+        // Enlaces de paginación
+        div(class="flex justify-end space-x-2 ml-4")
+            if paginaActual > 1
+                a(
+                    href=`/asistencias/principal?page=${paginaActual - 1}`
+                    class="bg-gray-200 py-2 px-4 rounded-lg text-gray-600 hover:bg-gray-300"
+                ) Anterior
+
+            each page in Array.from({ length: totalPaginas }, (_, i) => i + 1)
+                a(
+                    href=`/asistencias/principal?page=${page}`
+                    class=`py-2 px-4 rounded-lg ${page === paginaActual ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}` 
+                )= page
+
+            if paginaActual < totalPaginas
+                a(
+                    href=`/asistencias/principal?page=${paginaActual + 1}`
+                    class="bg-gray-200 py-2 px-4 rounded-lg text-gray-600 hover:bg-gray-300"
+                ) Siguiente
+
+        div(class="flex space-x-4")
+            //Buscador
+            div
+                input(type="text" id="search" name="search" placeholder="Empleado, Id, o Sucursal" class="block w-full px-6 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm")
+            div(class="flex shadow-md border items-center px-2 hover:bg-gray-100")
+                a(href="/asistencias/exportar-excel" class="bg-white-500 text-black font-bold py-2 px-2 rounded")
+                    i.fa.fa-file-excel.mr-2
+                    | Exportar a Excel
+                img(src="/img/excel.png" alt="Eliminar" class="inline-block w-8 h-8")
+
+    // Contenedor principal de las cards
+    div(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8 mb-10")
+        each empleado in empleados
+            div(class="bg-white border shadow-lg rounded-lg p-4 employee-card" data-emp-id=empleado.Emp_Id)
+                div(class="flex justify-between items-center")
+                    div(class="text-center flex flex-col items-center")
+                        div(class="font-bold text-lg mb-1 employee-name")= empleado.Emp_Nombre
+                        div(class="text-sm text-gray-600 employee-branch") Sucursal: #{empleado.Emp_SucursalId}
+                    img(src="/img/configuraciones.png", alt="Icono Configuraciones" class="w-28 h-28 ml-auto")
+
+                div(class="flex justify-center space-x-2 mt-4")
+                    a(href=`/asistencias/ver/${empleado.Emp_Id}`, class="bg-gray-400 shadow-lg text-white font-bold w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 transform hover:scale-105 cursor-pointer")
+                        img(src="/img/ojo.png" alt="Ver Detalles" class="w-4 h-4")
+    
+    div(class="flex justify-between items-center mb-5 mt-10")
+        h1.text-3xl.font-bold Asistencia del personal
+        form(method="GET", action="/asistencias/principal")
+            div(class="border p-2")
+                label(for="fechaInicio" ) Desde:
+                input(type="date", name="fechaInicio", id="fechaInicio", class="mx-2 text-black", required)
+                label(for="fechaFin" class="font-semibold") Hasta:
+                input(type="date", name="fechaFin", id="fechaFin", class="mx-2 text-black", required)
+                button(type="submit" class="bg-blue-600 text-white p-1 rounded-lg") Filtrar
+        div(class="flex shadow-md border items-center px-2 hover:bg-gray-100")
+            a(href="/asistencias/exportar-excel-asistencias" class="bg-white-500 text-black font-bold py-2 px-2 rounded")
+                i.fa.fa-file-excel.mr-2
+                | Exportar a Excel
+            img(src="/img/excel.png" alt="Exportar a Excel" class="inline-block w-8 h-8")
+
+    table.w-full.mt-5.bg-white.border.border-gray-300.rounded-md.mb-8
+        thead.bg-gray-200
+            tr
+                th.px-4.py-2.text-center.font-bold.text-gray-700 ID
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Nombre del empleado
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Sucursal
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Horas Totales
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Llegada
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Salida
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Pago del día
+                th.px-4.py-2.text-center.font-bold.text-gray-700 Día
+
+        tbody
+            each asistencia in asistencias
+                tr(class="border-b.border-gray-200.hover:bg-gray-100")
+                    td.px-4.py-2.text-center #{asistencia.Asist_Id}
+                    td.px-4.py-2.text-center #{asistencia.Asist_NombreEmpleado}
+                    td.px-4.py-2.text-center #{asistencia.Asist_Sucursal}
+                    td.px-4.py-2.text-center #{asistencia.Asist_HorasTotales}
+                    td.px-4.py-2.text-center #{asistencia.Asist_Llegada}
+                    td.px-4.py-2.text-center #{asistencia.Asist_Salida || 'No registrado'}
+                    td.px-4.py-2.text-center #{asistencia.Asist_PagoDia}
+                    td.px-4.py-2.text-center #{asistencia.Asist_Dia}
+
+
+
+
+ 
+    
+    script.
+        const searchInput = document.getElementById('search');
+        const employeeCards = document.querySelectorAll('.employee-card');
+
+        // Función de búsqueda
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.toLowerCase();
+
+            employeeCards.forEach(card => {
+                const empName = card.querySelector('.employee-name').textContent.toLowerCase();
+                const empId = card.dataset.empId;
+                const empBranch = card.querySelector('.employee-branch').textContent.toLowerCase();
+
+                // Mostrar la tarjeta si coincide el nombre, el ID o la sucursal
+                if (empName.includes(query) || empId.includes(query) || empBranch.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });

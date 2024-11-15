@@ -1,0 +1,141 @@
+extends ../layout/sucursalesindex
+
+block contenido
+    div(class="flex justify-center items-center mb-5")
+
+    // Alerta para mostrar cuando no haya cambios
+    div(id="alertaSinCambios", class="hidden bg-yellow-200 text-yellow-800 font-bold py-2 px-4 rounded-lg mb-4 text-center")
+        | No hubo ninguna modificación.
+
+    form(method="POST", action=`/asistencias/editar/${empleado.Emp_Id}`, id="formularioEditar")
+        input(type="hidden", name="_csrf", value=csrfToken)
+        
+        // Información del empleado
+        div(class="bg-white border shadow-lg rounded-lg p-6 w-full mx-auto")
+            div(class="flex items-center")
+                img(src="/img/configuraciones.png", alt="Icono Configuraciones" class="w-40 h-40") 
+                input(type="text", name="Emp_Nombre", id="nombre", class="font-bold text-3xl mb-4 ml-10 rounded-md border h-10", value=empleado.Emp_Nombre, data-original=empleado.Emp_Nombre)
+
+            div(class="flex space-x-10 mt-3" data-sueldo=`${empleado.Emp_Sueldo}`)
+                div.flex
+                    .font-bold.text-xl ID: 
+                    .text-xl.ml-1 #{empleado.Emp_Id}
+                div.flex
+                    .font-bold.text-xl Horas: 
+                    .text-xl.ml-1 #{empleado.Emp_Horas}
+                div.flex
+                    .font-bold.text-xl Sueldo: 
+                    .text-xl.ml-1 $#{empleado.Emp_Sueldo}
+                div(class="")
+                    label(for="sucursal", class="text-xl font-bold ") Sucursal:
+                    select(name="Emp_SucursalId", id="sucursal", class="border rounded p-2 ml-2", data-original=empleado.Emp_SucursalId)
+                        each sucursal in sucursales
+                            option(value=sucursal.Suc_Id, selected=sucursal.Suc_Id == empleado.Emp_SucursalId)= sucursal.Suc_Nombre
+
+                div.flex
+                    .font-bold.text-xl Status: 
+                    .text-xl.ml-1 #{empleado.Emp_Status ? 'Activo' : 'Inactivo'}
+                div(class="")
+                    label(for="formaPago", class="font-bold text-xl") Forma de pago:
+                    select(name="Emp_FormaNombre", id="formaPago", class="border rounded p-2 ml-2", onchange="actualizarDiasPago()", data-original=empleado.Emp_FormaPago)
+                        each forma in formasPago
+                            option(value=forma.id, selected=empleado.Emp_FormaPago == forma.Forma_Nombre)
+                                | #{forma.Forma_Nombre}
+
+            div(class="flex space-x-4 mt-5")                    
+                div(class="flex items-center")
+                    label(for="diasPago", class="text-xl font-bold") Días de Pago:
+                    input(type="number", name="Emp_DiasPago", id="diasPago", class="border rounded p-1 ml-2 text-center", value=empleado.Emp_DiasPago, readonly, data-original=empleado.Emp_DiasPago)
+                div.flex.mt-3
+                    .font-bold.text-xl Sueldo diario: 
+                    .text-xl.ml-1 $<span id="sueldoDiario">#{empleado.Emp_SueldoFinal}</span>
+
+        div(class="flex justify-center mt-6")
+            a(href="/asistencias/principal" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600")
+                | Volver a la Lista de Empleados
+            button(type="button", class="bg-red-500 shadow-lg text-white font-bold py-2 px-4 ml-5 rounded-lg cursor-pointer hover:bg-red-600", onclick="openModal()") Eliminar
+            button(type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg ml-5 hover:bg-green-600") Editar
+
+    // Cuadro de diálogo de confirmación
+    div(id="confirmModal", class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden")
+        div(class="bg-white rounded-lg p-6 w-80 text-center")
+            h2(class="text-lg font-semibold mb-4") ¿Estás seguro de que deseas eliminar a este empleado?
+            div(class="flex justify-center")
+                form(method="POST", action=`/asistencias/eliminar/${empleado.Emp_Id}`, class="inline")
+                    input(type="hidden", name="_method", value="DELETE")
+                    input(type="hidden", name="_csrf", value=csrfToken)
+                    button(type="submit", class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg mr-2 hover:bg-red-600") Sí, Eliminar
+                button(type="button", class="bg-gray-300 text-black font-bold py-2 px-4 rounded-lg hover:bg-gray-400", onclick="closeModal()") Cancelar
+
+    block scripts
+        script.
+            function openModal() {
+                document.getElementById('confirmModal').classList.remove('hidden');
+            }
+
+            function closeModal() {
+                document.getElementById('confirmModal').classList.add('hidden');
+            }
+
+            function actualizarDiasPago() {
+                const sueldoEmpleado = parseFloat(document.querySelector('[data-sueldo]').getAttribute('data-sueldo')) || 0;
+                const diasPagoInput = document.getElementById('diasPago');
+                let dias;
+
+                // Define los días según la forma de pago seleccionada
+                const formaPagoSelect = document.getElementById('formaPago');
+                const formaPago = formaPagoSelect.options[formaPagoSelect.selectedIndex].text;
+                if (formaPago === 'Quincenal') dias = 15;
+                else if (formaPago === 'Mensual') dias = 30;
+                else if (formaPago === 'Semanal') dias = 7;
+                else if (formaPago === 'Catorcenal') dias = 14;
+                else if (formaPago === 'Bimestral') dias = 60;
+                else dias = 0;
+
+                diasPagoInput.value = dias;
+                // Calcular y verificar sueldo diario
+                const sueldoDiarioSpan = document.getElementById('sueldoDiario');
+                if (dias > 0) {
+                    const sueldoDiario = (sueldoEmpleado / dias).toFixed(2);
+                    sueldoDiarioSpan.innerText = sueldoDiario;
+                } else {
+                    sueldoDiarioSpan.innerText = '0.00';
+                }
+            }
+
+            document.getElementById('formularioEditar').addEventListener('submit', function (event) {
+                event.preventDefault();
+                
+                const formulario = event.target;
+                const inputs = formulario.querySelectorAll('input, select');
+                const datosModificados = {};
+
+                inputs.forEach(input => {
+                    const valorActual = input.value;
+                    const valorOriginal = input.getAttribute('data-original');
+
+                    // Compara si el valor actual es diferente al valor original
+                    if (valorActual != valorOriginal) {
+                        datosModificados[input.name] = valorActual;
+                    }
+                });
+
+                if (Object.keys(datosModificados).length > 0) {
+                    // Si hay modificaciones, enviamos los datos modificados
+                    fetch(formulario.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'CSRF-Token': formulario._csrf.value
+                        },
+                        body: JSON.stringify(datosModificados)
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.href = '/asistencias/principal';
+                        }
+                    }).catch(error => console.error(error));
+                } else {
+                    // Si no hay modificaciones, muestra la alerta
+                    document.getElementById('alertaSinCambios').classList.remove('hidden');
+                }
+            });

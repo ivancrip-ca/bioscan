@@ -1,0 +1,53 @@
+extends ../layout/sucursalesindex
+
+block contenido
+
+    a(href=`/equipos/mantenimiento/${mantenimiento.Mant_IdEquipo}`)
+        div(class="flex items-center space-x-1 my-2")
+            img(src="/img/atras.png" alt="Icono atras" class="w-4 h-4")
+            h2(class="font-semibold text-md") Regresar
+
+    // Mensaje de error si el mantenimiento ya está finalizado
+    if mensajeError
+        div(class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" id="error-message")
+            strong(class="font-bold") ¡Error! 
+            span= mensajeError
+
+    div(class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4")
+        div(class="flex mb-2 space-x-2")
+            h1(class="text-2xl font-semibold") Información del mantenimiento:
+            h1(class="text-2xl font-semibold text-gray-500")=mantenimiento.Mant_Titulo
+        
+        div(class="flex items-center space-x-2 mt-6")
+            label(for="descripcion" class="block text-black text-lg font-bold mb-2") Descripción:
+            textarea(readonly id="descripcion" name="descripcion" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-500 leading-tight focus:outline-none focus:shadow-outline" rows="4")=mantenimiento.Mant_Descripcion
+
+        div(class="flex items-center space-x-14 mt-6")
+            label(for="costo" class="block text-black text-lg font-bold mb-2") Costo:
+            div(class="relative w-full")
+                span(class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500") $
+                p(readonly class="pl-8 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")=mantenimiento.Mant_Costo
+            label(for="costo" class="block text-black text-lg font-bold mb-2") Usuario encargado:
+            p(readonly class="pl-8 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")=mantenimiento.Mant_Usuario
+
+        div(class="flex items-center space-x-14 mt-6")
+            label(for="costo" class="block text-black text-lg font-bold mb-2") Fecha de mantenimiento:
+            p(readonly type="text" id="costo" name="costo" class="pl-8 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")=mantenimiento.Mant_DiaMant
+        div(class="flex justify-center space-x-14 mt-6 items-center")
+            form(action=`/equipos/actualizar/${mantenimiento.Mant_Id}` method="POST")
+                input(type="hidden" name="_csrf" value=csrfToken)
+                input(type="submit" value="Finalizar" class="bg-green-500 text-white font-bold py-2 px-4 font-semibold text-center rounded-lg cursor-pointer hover:bg-green-600")
+            form()
+                input(type="submit", class="bg-red-500 shadow-lg text-white font-bold py-2 px-4 ml-5 rounded-lg cursor-pointer hover:bg-red-600", onclick="openModal()")
+            
+        div(class="justify-end flex")
+            h2(class=`${mantenimiento.Mant_Status === 0 ? 'text-green-700' : 'text-red-700'} font-semibold`)= mantenimiento.Mant_Status === 0 ? 'Abierto' : 'Finalizado'
+
+    // JavaScript para ocultar el mensaje después de 5 segundos
+    script.
+        setTimeout(() => {
+            const errorMessage = document.getElementById("error-message");
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
+        }, 5000);

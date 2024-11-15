@@ -1,0 +1,79 @@
+extends ../layout/sucursalesindex
+
+block contenido
+    a(href=`/panelcontrol/informacion/${sucursalId}`)
+        div(class="flex items-center space-x-1 my-2")
+            img(src="/img/atras.png" alt="Icono atras" class="w-4 h-4")
+            h2(class="font-semibold text-md") Regresar
+
+    .container.mx-auto.mt-4.grid.grid-cols-2.gap-8
+        // Formulario de registro del equipo
+        div(class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4")
+            div(class="flex mb-2 space-x-2")
+                h1(class="text-2xl font-semibold") Registro de mantenimiento para el equipo:
+                h1(class="text-2xl font-semibold")=equipo.Equip_Nombre
+            
+            div(class="flex mb-2 space-x-2")
+                p(class="text-gray-700") Usuario asignado para el mantenimiento:
+                p(class="text-gray-400")=nombreUsuario
+
+            form(method="POST" action=`/equipos/mantenimiento/${id}`)
+                input(type="hidden" name="_csrf" value=csrfToken)
+
+                div(class="mb-4")
+                    label(for="nombre" class="block text-gray-700 text-sm font-bold mb-2") Motivo:
+                    input(type="text" id="nombre" name="nombre" placeholder="Motivo del mantenimiento" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")
+
+                div(class="mb-4")
+                    label(for="descripcion" class="block text-gray-700 text-sm font-bold mb-2") Descripción:
+                    textarea(id="descripcion" name="descripcion" placeholder="Descripción del mantenimiento" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="4")
+
+                div(class="mb-4")
+                    label(for="costo" class="block text-gray-700 text-sm font-bold mb-2") Costo:
+                    div(class="relative")
+                        span(class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500") $
+                        input(type="text" id="costo" name="costo" placeholder="Costo total del mantenimiento" class="pl-8 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" oninput="formatCost(this)")
+
+                div(class="mb-4")
+                    label(for="dia_mantenimiento" class="block text-gray-700 text-sm font-bold mb-2") Día del mantenimiento:
+                    input(type="date" id="dia_mantenimiento" name="dia_mantenimiento" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")
+
+                div(class="flex justify-between")
+                    a(href=`/equipos/programarmante/${mantenimientos.Mant_Id}` class="bg-cyan-600 text-center hover:bg-cyan-700 text-white font-bold py-3 cursor-pointer rounded-xl px-4 mt-1") Programar mantenimiento
+                    input(class="bg-blue-600 text-center hover:bg-blue-700 text-white font-bold py-3 cursor-pointer rounded-xl px-4 mt-1" type="submit" value="Registrar mantenimiento")
+            
+        //Cuadro de historial de mantenimientos
+        div(class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4")
+            div(class="flex mb-2 space-x-2")
+                h1(class="text-2xl font-semibold") Historial de mantenimientos
+
+            if mantenimientos.length > 0
+                .row(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8")
+                    each mantenimiento in mantenimientos
+                        div(class="bg-white shadow-md rounded-lg pt-4 pb-6 mb-4 flex flex-col items-center")
+                            h1(class="font-semibold text-sm")= mantenimiento.Mant_DiaMant
+                            h2(class=`${mantenimiento.Mant_Status === 0 ? 'text-green-700' : 'text-red-700'} font-semibold`)
+                                = mantenimiento.Mant_Status === 0 ? 'Abierto' : 'Finalizado'
+                            a(href=`/equipos/vista/${mantenimiento.Mant_Id}` class="bg-green-500 text-white font-semibold text-center py-1 px-4 rounded-lg text-xs cursor-pointer transition-transform duration-300 transform hover:scale-105 mt-2") Ver
+            else
+                div(class="text-center text-gray-600 mt-8")
+                    p No hay mantenimientos disponibles para este equipo.
+
+            if totalPages > 1
+                div(class="flex justify-center space-x-2 mt-4")
+                    if currentPage > 1
+                        a(href=`?page=${currentPage - 1}` class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300") Anterior
+                    each page in [...Array(totalPages).keys()].map(i => i + 1)
+                        a(href=`?page=${page}` class=`px-4 py-2 ${page === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200'} rounded-md hover:bg-gray-300`) #{page}
+                    if currentPage < totalPages
+                        a(href=`?page=${currentPage + 1}` class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300") Siguiente
+
+    script.
+        function formatCost(input) {
+            let value = input.value.replace(/,/g, '');
+            if (!isNaN(value)) {
+                input.value = new Intl.NumberFormat('en-US').format(value);
+            } else {
+                input.value = value.slice(0, -1); // Elimina el último carácter no numérico
+            }
+        }

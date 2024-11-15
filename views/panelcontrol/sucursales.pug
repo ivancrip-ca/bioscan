@@ -1,0 +1,38 @@
+extends ../layout/sucursalesindex
+
+block contenido
+
+    if !mensaje
+        div(class="flex justify-end mt-8 md:mb-8 sm:mb-8 mini:mb-8")
+            if paginaActual > 1
+                a(
+                    href=`/panelcontrol/sucursales?pagina=${paginaActual - 1}`
+                    class="bg-white shadow-xl text-black py-2 px-4 rounded-lg mr-2 font-semibold transition-transform duration-300 transform hover:scale-105 cursor-pointer block"
+                ) Anterior
+
+            each page in Array.from({ length: totalPaginas }, (_, i) => i + 1)
+                a(
+                    href=`/panelcontrol/sucursales?pagina=${page}`
+                    class=`shadow-xl py-2 px-4 rounded-lg mx-1 font-semibold transition-transform duration-300 transform hover:scale-105 cursor-pointer block ${page === paginaActual ? 'bg-blue-500 text-white' : 'bg-white text-black'}`
+                )= page
+
+            if paginaActual < totalPaginas
+                a(
+                    href=`/panelcontrol/sucursales?pagina=${paginaActual + 1}`
+                    class="bg-white shadow-xl text-black py-2 px-4 rounded-lg ml-2 font-semibold transition-transform duration-300 transform hover:scale-105 cursor-pointer block"
+                ) Siguiente
+
+    .container.mx-auto
+        if mensaje
+            p.text-center.text-red-500.font-bold= mensaje
+        else
+            .row(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-8")
+                each sucursal in sucursales
+                    a(
+                        href=`/panelcontrol/informacion/${sucursal.Suc_Id}`   
+                        class=`bg-blue-800 shadow-xl w-full h-48 p-4 transition-transform duration-300 transform hover:scale-105 cursor-pointer block rounded-xl relative`
+                    )
+                        h2(class="lg:text-3xl font-bold text-white text-center mt-10 overflow-hidden sm:text-4xl md:text-3xl xl:text-4xl mini:text-5xl")= sucursal.Suc_Nombre
+                        p(class="bg-red-500 text-white font-semibold text-center py-1 px-12 rounded-lg text-xs absolute bottom-4 left-1/2 transform -translate-x-1/2") Mantenimientos
+
+    

@@ -1,0 +1,30 @@
+
+header.bg-blue-700.p-4
+    .container.mx-auto.flex.justify-between.items-center
+        a(class="block" href="/panelcontrol/sucursales?pagina=1")
+            h1.text-2xl.text-white.font-extrabold.text-center Bio
+                span.font-normal Scan | 
+                span.font-normal=pagina
+
+     
+
+        nav(class="my-5 text-sm md:flex md: items-center md:gap-3 font-bold text-white hidden")
+            
+            a(href="/asistencias/principal" class="bg-white py-2 px-4 flex items-center rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer")
+                p(class="text-black mr-3") Personal
+                img(src="/img/asistencias.png" alt="Icono Asistencias")
+
+            a(class="bg-white py-2 px-4 rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer flex items-center " href="/configuracion/opciones") 
+                p(class="text-black mr-3") Configuración
+                img(src="/img/configuraciones.png", alt="Icono Configuraciones") 
+
+            
+
+            
+            img(src="/img/usuario.png", alt="Icono Usuario", class="ml-3") 
+            p()=nombreUsuario
+
+            form(action="/auth/cerrar-sesion" method="POST")
+                input(type="hidden" name="_csrf" value=csrfToken)
+                button(type="submit" class=" rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer flex items-center")
+                    img(src="/img/cerrar.png" alt="Icono Cerrar" )

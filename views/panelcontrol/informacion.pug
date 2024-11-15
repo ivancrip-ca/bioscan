@@ -1,0 +1,46 @@
+extends ../layout/sucursalesindex
+
+block contenido
+    a(href="/panelcontrol/sucursales?pagina=1")
+        div(class="flex items-center space-x-1 my-2")
+            img(src="/img/atras.png" alt="Icono atras" class="w-4 h-4")
+            h2(class="font-semibold text-md") Regresar
+
+    div(class="flex items-center justify-between")
+        div(class="flex")
+            h1(class="font-semibold text-xl") Equipos registrados
+            a(href=`/equipos/equipos/${sucursalId}` class="bg-green-600 text-white rounded-full h-6 w-6 flex items-center justify-center ml-3 transition-transform duration-300 transform hover:scale-105 font-semibold") +
+
+        // Paginador
+        if totalPages > 1
+            div(class="flex justify-end space-x-2")
+                if currentPage > 1
+                    a(href=`?page=${currentPage - 1}` class="px-4 py-2 border bg-white text-black transition duration-300 hover:bg-blue-500 rounded hover:text-white")
+                        | Anterior
+                
+                each page in Array.from({ length: totalPages }, (_, i) => i + 1)
+                    a(href=`?page=${page}`, class=(currentPage === page ? 'px-4 py-2 border bg-blue-500 text-white transition duration-300 hover:bg-blue-500 rounded' : 'px-4 py-2 border bg-white text-black transition duration-300 hover:bg-blue-500 rounded hover:text-white'))
+                        | #{page}
+
+                if currentPage < totalPages
+                    a(href=`?page=${currentPage + 1}` class="px-4 py-2 border bg-white text-black transition duration-300 hover:bg-blue-500 rounded hover:text-white")
+                        | Siguiente
+
+    // Verificar si hay equipos
+    if equipos.length > 0
+        .row(class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-8 mt-4")
+            each equipo in equipos
+                div(class="bg-white shadow-xl w-full h-auto py-4 block rounded-xl relative flex flex-col justify-between")
+                    div(class="flex items-center mb-4")
+                        h2(class="lg:text-2xl font-bold text-black mt-2 overflow-hidden sm:text-4xl md:text-3xl xl:text-2xl mini:text-5xl ml-3") #{equipo.Equip_Nombre}
+                        a(href=`/panelcontrol/infoequipo/${equipo.Equip_Id}` class="bg-green-500 text-white font-semibold text-center py-1 px-4 rounded-lg text-xs cursor-pointer transition-transform duration-300 transform hover:scale-105 mt-2 ml-2") Ver
+
+                    h1(class="text-center font-bold text-5xl py-4 min-h-[80px] flex items-center justify-center") #{equipo.Equip_Tipo}
+                    
+                    div(class="flex justify-center items-center mt-4 space-x-2 ml-4 mr-4 min-h-[50px]")  
+                        a(class="bg-blue-500 text-white font-semibold text-center py-1 px-4 rounded-lg text-xs cursor-pointer transition-transform duration-300 transform hover:scale-105") Documentación
+                        a(href=`/equipos/mantenimiento/${equipo.Equip_Id}` class="bg-red-500 text-white font-semibold text-center py-1 px-4 rounded-lg text-xs cursor-pointer transition-transform duration-300 transform hover:scale-105") Mantenimiento
+    else
+        // Mensaje cuando no hay equipos disponibles
+        div(class="text-center text-gray-600 mt-8")
+            p No hay equipos disponibles para esta sucursal.
