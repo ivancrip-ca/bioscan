@@ -139,7 +139,6 @@ const vistaMantenimiento = async (req, res) => {
     }
 };
 
-
 const registrarMantenimiento = async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion, costo, dia_mantenimiento } = req.body;
@@ -180,8 +179,6 @@ const registrarMantenimiento = async (req, res) => {
     }
 };
 
-
-
 const vistaEquipoMantenimiento = async (req, res) => {
     const { id } = req.params; // El ID del mantenimiento se pasa en la URL.
 
@@ -204,6 +201,7 @@ const vistaEquipoMantenimiento = async (req, res) => {
         res.status(500).send("Hubo un error al obtener la información del mantenimiento.");
     }
 };
+
 const actualizarStatus = async (req, res) => {
     try {
         const { id } = req.params;
@@ -237,7 +235,6 @@ const actualizarStatus = async (req, res) => {
     }
 };
 
-
 const vistaProgramarMante = async (req, res) => {
     const { id } = req.params; // Obtener el ID de la sucursal desde la URL
     const mantenimiento = await Mantenimiento.findByPk(id, {
@@ -257,10 +254,6 @@ const vistaProgramarMante = async (req, res) => {
         id  // Pasar el ID de la sucursal al formulario
     });
 }
-
-
-
-
 
 
 export {

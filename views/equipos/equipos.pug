@@ -1,152 +1,53 @@
 extends ../layout/sucursalesindex
 
 block contenido
-
-
     if errores
         div(class="fixed top-4 right-4 max-w-xs z-50")
             each error in errores
                 p.bg-red-600.text-white.text-sm.text-center.py-2.mt-2.font-bold.rounded-md.shadow-lg.animate-slideInOutRight.px-6= error.msg
-
 
     a(href=`/panelcontrol/informacion/${sucursalId}`)
         div(class="flex items-center space-x-1 my-2")
             img(src="/img/atras.png" alt="Icono atras" class="w-4 h-4")
             h2(class="font-semibold text-md") Regresar
 
-    .container.mx-auto.mt-8.grid.grid-cols-2.gap-8
+    // Contenedor principal adaptativo
+    div(class="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 gap-8")
         // Formulario de registro del equipo
-        div(class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4")
-            h1(class="text-2xl font-semibold mb-4") Registrar Equipo
+        div(class="bg-white shadow-md rounded-lg px-6 md:px-8 pt-6 pb-8 mb-4")
+            h1(class="text-xl md:text-2xl font-semibold mb-4 text-center md:text-left") Registrar Equipo
 
             form(method="POST" action=`/equipos/equipos/${sucursalId}`)
                 input(type="hidden" name="_csrf" value=csrfToken)
                 div(class="mb-4")
-                    label(for="nombre" class="block text-gray-700 text-sm font-bold mb-2") Nombre del Equipo:
+                    label(for="nombre" class="block text-gray-700 text-sm md:text-base font-bold mb-2") Nombre del Equipo:
                     input(type="text" id="nombre" name="nombre" placeholder="Nombre del equipo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")
 
                 div(class="mb-4")
-                    label(for="numero_serie" class="block text-gray-700 text-sm font-bold mb-2") Número de Serie:
+                    label(for="numero_serie" class="block text-gray-700 text-sm md:text-base font-bold mb-2") Número de Serie:
                     input(type="text" id="numero_serie" name="numero_serie" placeholder="Número de serie" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline")
-                
+
                 div(class="mb-4")
-                    label(for="tipo_equipo" class="block text-gray-700 text-sm font-bold mb-2") Tipo de Equipo:
+                    label(for="tipo_equipo" class="block text-gray-700 text-sm md:text-base font-bold mb-2") Tipo de Equipo:
                     select(id="tipo_equipo" name="tipo_equipo" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline")
                         option(value="Rayos X") Rayos X
                         option(value="Ultrasonido") Ultrasonido
                         option(value="Resonancia Magnética") Resonancia Magnética
                         option(value="Otro") Otro
                 
-                //- div(class="mb-4")
-                //-     label(for="documento" class="block text-gray-700 text-sm font-bold mb-2") Subir Documento (PDF):
-                //-     input(type="file" id="documento" name="documento" accept=".pdf" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none")
-                //-     // Campo para renombrar el documento
-                //-     input(type="text" id="nombre_documento" name="nombre_documento" placeholder="Renombrar documento" class="mt-2 block w-full text-sm text-gray-700 border rounded py-1 px-2 focus:outline-none")
-                
-                //- div(class="mb-4")
-                //-     label(for="imagenes" class="block text-gray-700 text-sm font-bold mb-2") Subir Imágenes:
-                //-     input(type="file" id="imagenes" name="imagenes" accept="image/*" multiple class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none")
-                
                 div(class="flex items-center justify-between")
-                    input(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" value="Registrar equipo")    
-                
-                    
+                    input(
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full md:w-auto"
+                        type="submit"
+                        value="Registrar equipo"
+                    )
 
-        // Vista previa de archivos e imágenes seleccionadas
-        //- div(class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4")
-        //-     h2(class="text-2xl font-semibold mb-4") Vista Previa
+        //- // Vista previa de archivos (opcional en móviles)
+        //- div(class="bg-white shadow-md rounded-lg px-6 md:px-8 pt-6 pb-8 hidden md:block")
+        //-     h2(class="text-xl md:text-2xl font-semibold mb-4") Vista Previa
 
-        //-     // Contenedor para la vista previa del documento
         //-     div#document-preview(class="mb-4")
         //-         p(class="text-gray-600 text-sm") Ningún documento seleccionado
-            
-        //-     // Contenedor para la vista previa de las imágenes
-        //-     div#image-preview.grid.grid-cols-3.gap-4
+
+        //-     div#image-preview.grid.grid-cols-2.md:grid-cols-3.gap-4
         //-         p(class="text-gray-600 text-sm col-span-3") Ninguna imagen seleccionada
-
-        script.
-            document.addEventListener('DOMContentLoaded', function () {
-                // Vista previa del documento PDF
-                const documentInput = document.getElementById('documento');
-                const documentPreview = document.getElementById('document-preview');
-                const nombreDocumento = document.getElementById('nombre_documento');
-
-                documentInput.addEventListener('change', function () {
-                    const file = documentInput.files[0];
-                    if (file) {
-                        const fileName = file.name;
-                        documentPreview.innerHTML = `<p class="text-gray-800 font-bold">Documento seleccionado: ${fileName}</p>`;
-                        nombreDocumento.value = fileName; // Rellenar el campo de texto con el nombre del archivo
-                    } else {
-                        documentPreview.innerHTML = `<p class="text-gray-600 text-sm">Ningún documento seleccionado</p>`;
-                        nombreDocumento.value = ''; // Limpiar el campo de renombrar si no hay archivo
-                    }
-                });
-
-                // Vista previa y eliminación de imágenes
-                const imageInput = document.getElementById('imagenes');
-                const imagePreview = document.getElementById('image-preview');
-                let selectedImages = []; // Arreglo para almacenar las imágenes seleccionadas
-
-                imageInput.addEventListener('change', function () {
-                    const files = Array.from(imageInput.files);
-                    selectedImages = files; // Guardar las imágenes seleccionadas
-
-                    renderImagePreview(); // Mostrar la vista previa de las imágenes
-                });
-
-                // Función para mostrar la vista previa de las imágenes
-                function renderImagePreview() {
-                    imagePreview.innerHTML = ''; // Limpiar la vista previa anterior
-                    if (selectedImages.length > 0) {
-                        selectedImages.forEach((file, index) => {
-                            const reader = new FileReader();
-                            reader.onload = function (e) {
-                                const imageUrl = e.target.result;
-
-                                // Crear el contenedor de la imagen y la "X" para eliminarla
-                                const imageContainer = document.createElement('div');
-                                imageContainer.classList.add('relative', 'w-full', 'h-auto');
-
-                                const img = document.createElement('img');
-                                img.src = imageUrl;
-                                img.alt = file.name;
-                                img.classList.add('w-full', 'h-auto', 'rounded-md');
-
-                                // Crear el botón "X" para eliminar la imagen
-                                const deleteButton = document.createElement('button');
-                                deleteButton.innerHTML = 'X';
-                                deleteButton.classList.add('absolute', 'top-0', 'right-0', 'bg-red-500', 'text-white', 'rounded-full', 'w-6', 'h-6', 'flex', 'items-center', 'justify-center', 'cursor-pointer', 'hover:bg-red-700');
-                                deleteButton.addEventListener('click', function () {
-                                    removeImage(index); // Eliminar la imagen seleccionada
-                                });
-
-                                // Añadir la imagen y el botón de eliminar al contenedor
-                                imageContainer.appendChild(deleteButton);
-                                imageContainer.appendChild(img); // Se había omitido agregar la imagen al contenedor
-                                imagePreview.appendChild(imageContainer);
-                            };
-                            reader.readAsDataURL(file);
-                        });
-                    } else {
-                        imagePreview.innerHTML = `<p class="text-gray-600 text-sm col-span-3">Ninguna imagen seleccionada</p>`;
-                    }
-                }
-
-                // Función para eliminar una imagen seleccionada
-                function removeImage(index) {
-                    selectedImages.splice(index, 1); // Eliminar la imagen del arreglo
-                    updateImageInput(); // Actualizar el campo de archivo
-                    renderImagePreview(); // Volver a renderizar la vista previa con las imágenes restantes
-                }
-
-                // Función para actualizar el input con las imágenes restantes
-                function updateImageInput() {
-                    const dataTransfer = new DataTransfer();
-                    selectedImages.forEach((file) => {
-                        dataTransfer.items.add(file); // Añadir las imágenes restantes al nuevo conjunto de archivos
-                    });
-                    imageInput.files = dataTransfer.files; // Actualizar el campo input con los nuevos archivos
-                }
-            });
-

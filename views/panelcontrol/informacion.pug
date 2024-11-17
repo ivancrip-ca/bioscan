@@ -32,7 +32,7 @@ block contenido
             each equipo in equipos
                 div(class="bg-white shadow-xl w-full h-auto py-4 block rounded-xl relative flex flex-col justify-between")
                     div(class="flex items-center mb-4")
-                        h2(class="lg:text-2xl font-bold text-black mt-2 overflow-hidden sm:text-4xl md:text-3xl xl:text-2xl mini:text-5xl ml-3") #{equipo.Equip_Nombre}
+                        h2(class="text-2xl font-bold text-black mt-2 overflow-hidden ml-3") #{equipo.Equip_Nombre}
                         a(href=`/panelcontrol/infoequipo/${equipo.Equip_Id}` class="bg-green-500 text-white font-semibold text-center py-1 px-4 rounded-lg text-xs cursor-pointer transition-transform duration-300 transform hover:scale-105 mt-2 ml-2") Ver
 
                     h1(class="text-center font-bold text-5xl py-4 min-h-[80px] flex items-center justify-center") #{equipo.Equip_Tipo}

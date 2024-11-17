@@ -19,10 +19,7 @@ router.get('/equipos/:sucursalId', protegerRuta, vistaRegistroEquipos);
 
 // Ruta para procesar el formulario de registro de equipos
 router.post(
-    '/equipos/:sucursalId',
-    protegerRuta, // Asegura que el token CSRF sea verificado antes de manejar los archivos
-    registrarEquipo
-);
+    '/equipos/:sucursalId',protegerRuta,registrarEquipo);
 
 router.get('/mantenimiento/:id', protegerRuta, vistaMantenimiento)
 router.post('/mantenimiento/:id', protegerRuta, registrarMantenimiento)

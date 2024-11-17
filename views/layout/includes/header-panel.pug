@@ -1,30 +1,55 @@
-
-header.bg-blue-700.p-4
-    .container.mx-auto.flex.justify-between.items-center
+header(class="bg-blue-700 p-4")
+    .container.mx-auto.flex.items-center.justify-between
         a(class="block" href="/panelcontrol/sucursales?pagina=1")
-            h1.text-2xl.text-white.font-extrabold.text-center Bio
-                span.font-normal Scan | 
-                span.font-normal=pagina
+            h1(class="text-2xl text-white font-extrabold flex items-center") 
+                | Bio 
+                span(class="font-normal") Scan | 
+                span(class="font-normal")=pagina
 
-     
+        // Botón para mostrar/ocultar menú en móviles
+        button(class="md:hidden text-white focus:outline-none" id="menu-toggle")
+            img(src="/img/menu.png" alt="Abrir Menú" class="h-6 w-6")
 
-        nav(class="my-5 text-sm md:flex md: items-center md:gap-3 font-bold text-white hidden")
-            
-            a(href="/asistencias/principal" class="bg-white py-2 px-4 flex items-center rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer")
+        // Overlay y menú móvil
+        div(id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 items-center")
+        nav(id="mobile-menu" class="justify-center fixed top-0 left-0 h-full w-64 bg-blue-700 transform -translate-x-full transition-transform duration-300 z-50 md:relative md:transform-none md:bg-transparent md:h-auto md:w-auto md:flex md:items-center md:justify-end md:gap-3 font-bold text-white py-2")
+            div(class="p-4 md:hidden flex justify-between items-center bg-blue-800")
+                h2(class="text-white font-bold text-lg") Menú
+                button(class="text-white focus:outline-none" id="menu-close")
+                    
+
+            a(href="/asistencias/principal" class="md:justify-center sm:justify-center md:my-4 sm:my-4 md:mx-2 sm:mx-2 d:shadow-lg sm:shadow-lg bg-white py-2 px-4 flex items-center rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer md:my-2")
                 p(class="text-black mr-3") Personal
                 img(src="/img/asistencias.png" alt="Icono Asistencias")
 
-            a(class="bg-white py-2 px-4 rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer flex items-center " href="/configuracion/opciones") 
+            a(class="md:justify-center sm:justify-center md:my-4 sm:my-4 md:mx-2 sm:mx-2 md:shadow-lg sm:shadow-lg bg-white py-2 px-4 rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer flex items-center " href="/configuracion/opciones") 
                 p(class="text-black mr-3") Configuración
                 img(src="/img/configuraciones.png", alt="Icono Configuraciones") 
 
             
 
-            
-            img(src="/img/usuario.png", alt="Icono Usuario", class="ml-3") 
-            p()=nombreUsuario
-
-            form(action="/auth/cerrar-sesion" method="POST")
+            form(action="/auth/cerrar-sesion" method="POST" class="sm:flex md:flex sm:justify-center md:justify-center sm:items-center md:items-center")
                 input(type="hidden" name="_csrf" value=csrfToken)
-                button(type="submit" class=" rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer flex items-center")
-                    img(src="/img/cerrar.png" alt="Icono Cerrar" )
+                button(type="submit" class="rounded-lg transition-transform duration-300 transform hover:scale-105 cursor-pointer flex items-center")
+                    img(src="/img/cerrar.png" alt="Icono Cerrar")
+
+
+
+
+
+
+// Script para manejar el comportamiento del menú
+script.
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuClose = document.getElementById('menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('overlay');
+
+    const toggleMenu = () => {
+        mobileMenu.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    };
+
+    menuToggle.addEventListener('click', toggleMenu);
+    menuClose.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);

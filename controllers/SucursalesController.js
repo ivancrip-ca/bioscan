@@ -64,7 +64,6 @@ const vistaSucursales = async (req, res) => {
     }
 };
 
-
 const ITEMS_PER_PAGE = 8;
 
 const informacionSucursal = async (req, res) => {
