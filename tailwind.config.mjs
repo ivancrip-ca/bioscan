@@ -15,7 +15,7 @@ export default {
         slideInOutRight: 'slideInOutRight 4s ease-out forwards',
       },
       screens: {
-        'mini': {'min': '500px', 'max': '634px'}
+        'mini': {'min': '500px', 'max': '634px'},
       },
     },
   },
